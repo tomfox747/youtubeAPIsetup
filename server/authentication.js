@@ -3,14 +3,13 @@ const youtube = require('youtube-api')
 const OAuth2  = google.auth.OAuth2
 
 const credentials = require('./database/credentials.json')
-const tokensFile = require('./database/tokens.json')
 
 /********************************
  * variables
  */
 var ClientId = credentials.web.client_id
 var ClientSecret = credentials.web.client_secret
-var RedirectUrl = "http://4d453f38.ngrok.io"
+var RedirectUrl = "http://c8208027.ngrok.io"
 //api key = AIzaSyClokCm5RDTCkNY9N7ninR3No967wvFEz4
 
 

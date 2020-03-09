@@ -44,9 +44,6 @@ function App() {
       console.log(err)
     })
   }
-  const getAuthCode = () =>{
-    
-  }
 
 
   const setAccessToken = () =>{
@@ -62,7 +59,7 @@ function App() {
   return (
     <div className="App">
       <p>Youtube API test project</p>
-      <button onClick={() => getAuthCode()}>Authenticate</button>
+      <button onClick={() => authenticate()}>Authenticate</button>
       <button onClick={() => setAccessToken()}>Set access token</button>
       <button onClick={() => uploadVideo()}>Upload Youtube Video</button>
       <button onClick={() => getVids()}>Get Videos for Username</button>

@@ -16,6 +16,7 @@
     "express-favicon": "^2.0.1",
     "favicon": "0.0.2",
     "googleapis": "^47.0.0",
+    "mongodb": "^3.5.4",
     "nodemon": "^2.0.2",
     "path": "^0.12.7",
     "youtube-api": "^2.0.10"

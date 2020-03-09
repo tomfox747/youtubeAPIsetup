@@ -21,22 +21,28 @@ app.use(express.static(path.join(__dirname, '../client/build')))
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-const tokensFile = require('./database/tokens.json')
 const userName = "tomfox747"
-
-
-
-
-
-
-
-
+const {getTokens, setToken} = require('./database/manageDB.js')
 
 //api authenticate
-app.get('/auth', (req,res) =>{
-    //if access token is not already set
-    url = authenticate()
-    res.redirect(url) // redirect will trigger response from the client to call 'setCode'
+app.get('/auth', async (req,res) =>{
+    var tokens = await getTokens()
+    var found = false
+    for(var i = 0; i < tokens.length; i++){
+        if(tokens[i].userName === "tomfox747"){
+            console.log("user already authenticated into the site")
+            if(tokens[i].accessToken !== ""){
+                found = true
+                break
+            }
+        }
+    }
+    if(found){
+        res.redirect('http://localhost:8080')
+    }else{
+        url = authenticate()
+        res.redirect(url) // redirect will trigger response from the client to call 'setCode'
+    }
 })
 
 //api set access token
@@ -45,9 +51,13 @@ app.post('/setCode', async (req,res) =>{
     console.log("code = " + code)
     var accessToken = await getToken(code)
     //save the access token to the current user
-    
-
-    res.send("token generated => " + accessToken)
+    try{
+        await setToken(userName, accessToken)
+        res.redirect('http://localhost:8080')
+    }catch(err){
+        console.log(err)
+        res.send("set code error")
+    }
 })
 
 //api get video information
