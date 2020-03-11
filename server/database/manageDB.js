@@ -17,7 +17,7 @@ async function getTokens(){
     var tokens = db.collection("tokens")
     tokens = tokens.find({}).toArray()
     return tokens
-} 
+}
 async function setToken(userName, token){
     await DBconnect()
     var db = client.db("youtubeTest")
@@ -30,7 +30,23 @@ async function setToken(userName, token){
     });
 }
 
+
+async function saveVideoID(videoID){
+    await DBconnect()
+    var db = client.db("youtubeTest")
+    var videos = db.collection("videos")
+    videos = videos.insertOne(videoID)
+}
+async function getVideoIDs(){
+    await DBconnect()
+    var videos = client.db("youtubeText").collection("videos")
+    videos = videos.find({}).toArray()
+    return videos
+}
+
 module.exports = {
     getTokens,
-    setToken
+    setToken,
+    saveVideoID,
+    getVideoIDs
 }

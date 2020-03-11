@@ -9,7 +9,9 @@ const {google} = require('googleapis')
 const OAuth2 = google.auth.OAuth2
 const readline = require('readline')
 const youtube = require('youtube-api')
-const {authenticate, getToken} = require('./authentication')
+const {authenticate, getToken, uploadVideo} = require('./googleAPI')
+const {getTokens, setToken, saveVideoID, getVideoIDs} = require('./database/manageDB.js')
+const {checkForToken} = require('./utils/tokenUtils')
 
 const app = express()
 const port = 8080
@@ -22,46 +24,69 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 const userName = "tomfox747"
-const {getTokens, setToken} = require('./database/manageDB.js')
 
-//api authenticate
+
+/*****************************************
+ * Oauth google authentication check and process
+ */
 app.get('/auth', async (req,res) =>{
     var tokens = await getTokens()
-    var found = false
-    for(var i = 0; i < tokens.length; i++){
-        if(tokens[i].userName === "tomfox747"){
-            console.log("user already authenticated into the site")
-            if(tokens[i].accessToken !== ""){
-                found = true
-                break
-            }
-        }
-    }
+    var found = checkForToken(tokens, userName)
+
     if(found){
-        res.redirect('http://localhost:8080')
+        res.send("User already authenticated")
     }else{
         url = authenticate()
         res.redirect(url) // redirect will trigger response from the client to call 'setCode'
     }
 })
 
-//api set access token
+/*****************************************
+ * save access token to database using auth code
+ */
 app.post('/setCode', async (req,res) =>{
     var code  = req.body.code
     console.log("code = " + code)
-    var accessToken = await getToken(code)
     //save the access token to the current user
     try{
+        var accessToken = await getToken(code)
         await setToken(userName, accessToken)
-        res.redirect('http://localhost:8080')
+        res.send("user token has been added")
     }catch(err){
         console.log(err)
-        res.send("set code error")
+        res.send("An error occured when setting the accessToken")
     }
 })
 
-//api get video information
+/*****************************************
+ * Upload video call
+ */
+app.post('/uploadVideo', (req,res) =>{
+    console.log("uploading video")
+    
+    try{
+        var fileName = 'myVideo.mp4' //video must be stored in the local server videos folder
+        var videoObject = uploadVideo()
+        var videoID = videoObject.ID //Pseudo code
+        saveVideoID(videoID)
+    }catch(err){
+        console.log("ERROR => " + err)
+    }
+})
 
+/****************************************
+/* api get video information
+*/
+app.get('/getVideos', (req,res) =>{
+    console.log("retrieving videos")
+    try{
+        videoIDs = getVideoIDs()
+        res.send(videoIDs)
+    }catch(err){
+        console.log("error " + err)
+        res.send("server error, could not retrieve video IDs")
+    }
+})
 
 
 
