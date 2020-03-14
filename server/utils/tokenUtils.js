@@ -1,9 +1,11 @@
+/****************************************
+ * Check whether token is available for a specified username
+ */
 function checkForToken(tokens, username){
     var found = false
     for(var i = 0; i < tokens.length; i++){
         if(tokens[i].userName === username){
-            console.log("user already authenticated into the site")
-            if(tokens[i].accessToken !== "" || tokens[i].accessToken !== undefined){
+            if(tokens[i].refreshToken !== "" || tokens[i].refreshToken !== undefined){
                 found = true
                 break
             }
@@ -13,6 +15,17 @@ function checkForToken(tokens, username){
     return found
 }
 
+function findToken(tokens, username){
+    var refreshToken
+    for(var tokenIndex = 0; tokenIndex < tokens.length; tokenIndex++){
+        if(tokens[tokenIndex].userName === username){
+            refreshToken = tokens[tokenIndex].refreshToken
+        }
+    }
+    return refreshToken
+}
+
 module.exports = {
-    checkForToken
+    checkForToken,
+    findToken
 }

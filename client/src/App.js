@@ -4,7 +4,7 @@ import './App.css';
 import Axios from 'axios'
 
 
-var ngRokAdd = ""
+var ngRokDomain = "http://cb3df030.ngrok.io"
 
 function App() {
   const[authCode, setAuthCode] = useState(null)
@@ -39,6 +39,12 @@ function App() {
     Axios.get('/auth')
     .then((res) =>{
       console.log(res.data)
+      if(res.data === true){ // if user authenticated returns true
+        alert("user is already authenticated")
+        window.location.replace(ngRokDomain)
+      }else{
+        window.location.replace(res.data)
+      }
     })
     .catch((err) =>{
       console.log(err)
@@ -49,8 +55,19 @@ function App() {
   const setAccessToken = () =>{
     console.log("setting access token")
   }
+
   const uploadVideo = () =>{
     console.log("uploading video")
+    Axios.post('/uploadVideo',{
+      input:"hello from client"
+    })
+    .then((res)=>{
+      console.log(res)
+      alert("video was uploaded")
+    })
+    .catch((err) =>{
+      console.log(err)
+    })
   }
   const getVids = () =>{
     console.log("getting your videos")

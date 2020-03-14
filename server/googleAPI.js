@@ -3,7 +3,6 @@ const youtube = require('youtube-api')
 const OAuth2  = google.auth.OAuth2
 const fs  = require('fs')
 
-
 const credentials = require('./database/credentials.json')
 
 /********************************
@@ -11,7 +10,7 @@ const credentials = require('./database/credentials.json')
  */
 var ClientId = credentials.web.client_id
 var ClientSecret = credentials.web.client_secret
-var RedirectUrl = "http://871c43ae.ngrok.io"
+var RedirectUrl = "http://cb3df030.ngrok.io"
 //api key = AIzaSyClokCm5RDTCkNY9N7ninR3No967wvFEz4
 
 
@@ -36,7 +35,7 @@ function getAuthUrl(oauth2Client){
     var url = oauth2Client.generateAuthUrl({
             access_type:'offline',
             scope:scopes,
-            approval_prompt: 'force'
+            approval_prompt: 'force',
     })
     return url
 }
@@ -47,9 +46,13 @@ function getAuthUrl(oauth2Client){
 async function getToken(code){
     console.log("CODE == " + code)
     var oauth2Client = getOAuthClient()
+    
     try{
         var tokens = await oauth2Client.getToken(code)
-        return tokens.tokens.access_token
+        console.log(tokens)
+        var accessToken = tokens.tokens.access_token
+        var refreshToken = tokens.tokens.refresh_token
+        return [accessToken, refreshToken]
     }catch(err){    
         console.log(err)
     }
@@ -60,17 +63,20 @@ async function getToken(code){
 /*******************************
  * set client credentials and upload a youtube video
  */
-async function uploadVideo(fileName, accessToken){
+async function uploadVideo(fileName, refreshToken){
     var oauth2Client = getOAuthClient()
     
     oauth2Client.setCredentials({
-        access_token:accessToken
+        refresh_token:refreshToken
     })
 
     const Youtube = google.youtube({
         version:'v3',
         auth:oauth2Client
     })
+
+    console.log("credentials = ")
+    console.log(oauth2Client)
 
     const fileSize = fs.statSync(__dirname + '/videos/' + fileName)
     console.log("upload file size = " + fileSize)
@@ -94,10 +100,8 @@ async function uploadVideo(fileName, accessToken){
                 console.log(err)
                 return "upload error"
             }
-            else{
-                console.log("upload completed")
-                return data
-            }
+            console.log("API upload complete")
+            return data
         }
     )
 }

@@ -18,12 +18,12 @@ async function getTokens(){
     tokens = tokens.find({}).toArray()
     return tokens
 }
-async function setToken(userName, token){
+async function setToken(userName, access_token, refresh_token){
     await DBconnect()
     var db = client.db("youtubeTest")
     var tokens = db.collection("tokens")
     var myquery = { userName: userName };
-    var newvalues = { $set: {userName: userName, accessToken: token } };
+    var newvalues = { $set: {userName: userName, accessToken: access_token, refreshToken: refresh_token } };
     tokens.updateOne(myquery, newvalues, function(err, res) {
       if (err) throw err;
       console.log("document updated");
@@ -31,13 +31,13 @@ async function setToken(userName, token){
 }
 
 
-async function saveVideoID(videoID){
+async function saveVideoID(videoObject){
     await DBconnect()
     var db = client.db("youtubeTest")
     var videos = db.collection("videos")
-    videos = videos.insertOne(videoID)
+    videos = videos.insertOne(videoObject)
 }
-async function getVideoIDs(){
+async function getVideoObjects(){
     await DBconnect()
     var videos = client.db("youtubeText").collection("videos")
     videos = videos.find({}).toArray()
@@ -48,5 +48,5 @@ module.exports = {
     getTokens,
     setToken,
     saveVideoID,
-    getVideoIDs
+    getVideoObjects
 }
