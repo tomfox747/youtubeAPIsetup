@@ -2,6 +2,7 @@
  * Check whether token is available for a specified username
  */
 function checkForToken(tokens, username){
+    console.log("checking for tokens")
     var found = false
     for(var i = 0; i < tokens.length; i++){
         if(tokens[i].userName === username){

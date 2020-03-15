@@ -3,6 +3,7 @@ const uri = "mongodb+srv://tomfox:Epiphonedb94@practicecluster-onmkw.mongodb.net
 const client = new MongoClient(uri, {useNewUrlParser:true,  useUnifiedTopology:true})
 
 const DBconnect = async () =>{
+    console.log("connecting to the database")
     try{
         await client.connect()
         console.log("connected to the database")
@@ -12,6 +13,7 @@ const DBconnect = async () =>{
 }
 
 async function getTokens(){
+    console.log("getting tokens")
     await DBconnect()
     var db = client.db("youtubeTest")
     var tokens = db.collection("tokens")
@@ -31,11 +33,12 @@ async function setToken(userName, access_token, refresh_token){
 }
 
 
-async function saveVideoID(videoObject){
+async function saveVideo(videoObject){
     await DBconnect()
     var db = client.db("youtubeTest")
     var videos = db.collection("videos")
     videos = videos.insertOne(videoObject)
+    console.log("video has been saved")
 }
 async function getVideoObjects(){
     await DBconnect()
@@ -47,6 +50,6 @@ async function getVideoObjects(){
 module.exports = {
     getTokens,
     setToken,
-    saveVideoID,
+    saveVideo,
     getVideoObjects
 }

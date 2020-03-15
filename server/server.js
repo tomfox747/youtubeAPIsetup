@@ -10,7 +10,7 @@ const OAuth2 = google.auth.OAuth2
 const readline = require('readline')
 const youtube = require('youtube-api')
 const {authenticate, getToken, uploadVideo} = require('./googleAPI')
-const {getTokens, setToken, saveVideoID, getVideoObjects} = require('./database/manageDB.js')
+const {getTokens, setToken, saveVideo, getVideoObjects} = require('./database/manageDB.js')
 const {checkForToken, findToken} = require('./utils/tokenUtils')
 
 const app = express()
@@ -32,6 +32,7 @@ const userName = "tomfox747"
  */
 app.get('/auth', async (req,res) =>{
     var tokens = await getTokens() //get tokens from database
+    console.log("authenticating user")
     var found = checkForToken(tokens, userName) //check if token exists for username
     
     if(found){
@@ -66,10 +67,11 @@ app.post('/setCode', async (req,res) =>{
 app.post('/uploadVideo', async (req,res) =>{
     console.log("uploading video")
     var tokens = await getTokens() //get tokens from database
-    var accessToken = findToken(tokens, userName)
-    try{
-        var fileName = 'pianoClip.mp4' //video must be stored in the local server videos folder
-        var videoResponse = await uploadVideo(fileName, accessToken) // call api function to upload video and return response object
+    var accessToken = await findToken(tokens, userName)
+    var fileName = 'pianoClip.mp4' //video must be stored in the local server videos folder
+    
+    uploadVideo(fileName, accessToken)
+    .then((videoResponse) =>{
         console.log("video upload completed")
         console.log(videoResponse)
         var videoData = videoResponse.data
@@ -77,23 +79,74 @@ app.post('/uploadVideo', async (req,res) =>{
             ID:videoData.id,
             title:videoData.snippet.title,
             description:videoData.snippet.description,
-            pulishedAt:videoData.snipped.publishedAt,
+            pulishedAt:videoData.snippet.publishedAt,
             author:userName,
             lightUps:0
         }
-        saveVideoID(videoObject) // save the vides reponse object to the database
-    }catch(err){
-        console.log("ERROR => " + err)
-    }
+        console.log("video object below")
+        console.log(videoObject)
+        saveVideo(videoObject)
+    })
+    .catch(err =>{
+        console.log(err)
+    })
 })
 
 /** video response object format
- data: {
+{
+  config: {
+    url: 'https://www.googleapis.com/upload/youtube/v3/videos?part=id%2Csnippet%2Cstatus&notifySubscribers=false&uploadType=multipart',
+    method: 'POST',
+    paramsSerializer: [Function],
+    data: PassThrough {
+      _readableState: [ReadableState],
+      readable: false,
+      _events: [Object: null prototype],
+      _eventsCount: 2,
+      _maxListeners: undefined,
+      _writableState: [WritableState],
+      writable: false,
+      allowHalfOpen: true,
+      _transformState: [Object],
+      _flush: [Function: flush],
+      [Symbol(kCapture)]: false
+    },
+    headers: {
+      'x-goog-api-client': 'gdcl/3.2.2 gl-node/12.16.1 auth/5.10.1',
+      'Content-Type': 'multipart/related; boundary=afc8aac9-7f60-4337-b283-fe2f25d60fef',
+      'Accept-Encoding': 'gzip',
+      'User-Agent': 'google-api-nodejs-client/3.2.2 (gzip)',
+      Authorization: 'Bearer ya29.a0Adw1xeUwLHZlmAPI_xN7pHPo192dURVQ1Tv9VMHVVmzalUW9RQpyAc-1kU_KSnUogoe-6Sjvx4RnHlmDuGoKBsxg4khIHT6wffX1EysuDrn7AfG_pX7RGAXmudiSZCpqmwf8IJM517uB7BNU7Oc7j-ZzQyM0eg0C80OS',
+      Accept: 'application/json'
+    },
+    params: [Object: null prototype] {
+      part: 'id,snippet,status',
+      notifySubscribers: false,
+      uploadType: 'multipart'
+    },
+    validateStatus: [Function],
+    retry: true,
+    body: PassThrough {
+      _readableState: [ReadableState],
+      readable: false,
+      _events: [Object: null prototype],
+      _eventsCount: 2,
+      _maxListeners: undefined,
+      _writableState: [WritableState],
+      writable: false,
+      allowHalfOpen: true,
+      _transformState: [Object],
+      _flush: [Function: flush],
+      [Symbol(kCapture)]: false
+    },
+    responseType: 'json'
+  },
+  data: {
     kind: 'youtube#video',
-    etag: '"SJZWTG6xR0eGuCOh2bX6w3s4F94/GtcrPjs3vYJeQ3810IQ8afbH7_A"',
-    id: 'hDo3rzPgbGg',
+    etag: '"SJZWTG6xR0eGuCOh2bX6w3s4F94/LVMz6FlbT8zxtb0KUcGEVH8aNcs"',
+    id: 'd3Bj3vxT-_w',
     snippet: {
-      publishedAt: '2020-03-12T20:35:28.000Z',
+      publishedAt: '2020-03-15T17:09:04.000Z',
       channelId: 'UCCQnlC5hFzUAT3Am4OGVVBQ',
       title: 'video upload from app',
       description: 'this is a test video',
@@ -110,6 +163,28 @@ app.post('/uploadVideo', async (req,res) =>{
       embeddable: true,
       publicStatsViewable: true
     }
+  },
+  headers: {
+    'alt-svc': 'quic=":443"; ma=2592000; v="46,43",h3-Q050=":443"; ma=2592000,h3-Q049=":443"; ma=2592000,h3-Q048=":443"; ma=2592000,h3-Q046=":443"; ma=2592000,h3-Q043=":443"; ma=2592000',
+    'cache-control': 'no-cache, no-store, max-age=0, must-revalidate',
+    connection: 'close',
+    'content-length': '1023',
+    'content-type': 'application/json; charset=UTF-8',
+    date: 'Sun, 15 Mar 2020 17:09:07 GMT',
+    etag: '"SJZWTG6xR0eGuCOh2bX6w3s4F94/LVMz6FlbT8zxtb0KUcGEVH8aNcs"',
+    expires: 'Mon, 01 Jan 1990 00:00:00 GMT',
+    pragma: 'no-cache',
+    server: 'UploadServer',
+    vary: 'Origin, X-Origin',
+    'x-goog-correlation-id': 'd3Bj3vxT-_w',
+    'x-guploader-uploadid': 'AEnB2Uo3R-lCkixWxBgakGTlmVbxPTrFPJ_dzvXJOHTiRNwMpMn-OE5NBwfVdmM8bMAMk9Nap3tjObQzxdSGP87NKpH9TmK3Tb22cNa3fBmWZEZEFjBoMyw'
+  },
+  status: 200,
+  statusText: 'OK',
+  request: {
+    responseURL: 'https://www.googleapis.com/upload/youtube/v3/videos?part=id%2Csnippet%2Cstatus&notifySubscribers=false&uploadType=multipart'
+  }
+}
  */
 
 

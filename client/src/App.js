@@ -4,7 +4,7 @@ import './App.css';
 import Axios from 'axios'
 
 
-var ngRokDomain = "http://cb3df030.ngrok.io"
+var ngRokDomain = "http://localhost:8080"
 
 function App() {
   const[authCode, setAuthCode] = useState(null)

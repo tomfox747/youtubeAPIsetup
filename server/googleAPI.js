@@ -10,7 +10,7 @@ const credentials = require('./database/credentials.json')
  */
 var ClientId = credentials.web.client_id
 var ClientSecret = credentials.web.client_secret
-var RedirectUrl = "http://cb3df030.ngrok.io"
+var RedirectUrl = "http://38cce71a.ngrok.io"
 //api key = AIzaSyClokCm5RDTCkNY9N7ninR3No967wvFEz4
 
 
@@ -64,23 +64,52 @@ async function getToken(code){
  * set client credentials and upload a youtube video
  */
 async function uploadVideo(fileName, refreshToken){
-    var oauth2Client = getOAuthClient()
+    return new Promise((resolve, reject) =>{
+        console.log("upload video google api called")
+        var oauth2Client = getOAuthClient()
+        
+        oauth2Client.setCredentials({
+            refresh_token:refreshToken
+        })
     
-    oauth2Client.setCredentials({
-        refresh_token:refreshToken
-    })
+        const Youtube = google.youtube({
+            version:'v3',
+            auth:oauth2Client
+        })
 
-    const Youtube = google.youtube({
-        version:'v3',
-        auth:oauth2Client
+        const fileSize = fs.statSync(__dirname + '/videos/' + fileName)
+        console.log("upload file size = " + fileSize.size)
+        Youtube.videos.insert({
+            part:'id,snippet,status',
+            notifySubscribers:false,
+            requestBody:{
+                snippet:{
+                    title:"video upload from app",
+                    description:"this is a test video"
+                },
+                status:{
+                    privacyStatus:'public'
+                }
+            },
+            media:{
+                body:fs.createReadStream(__dirname + '/videos/' + fileName)
+            }
+        },(err, data) =>{
+                if(err){
+                    console.log(err)
+                    reject(err)
+                }
+                console.log("API upload complete")
+                resolve(data)
+        }   
+        )
     })
-
-    console.log("credentials = ")
-    console.log(oauth2Client)
+    
+    
 
     const fileSize = fs.statSync(__dirname + '/videos/' + fileName)
-    console.log("upload file size = " + fileSize)
-    const response = Youtube.videos.insert({
+    console.log("upload file size = " + fileSize.size)
+    const response = await Youtube.videos.insert({
             part:'id,snippet,status',
             notifySubscribers:false,
             requestBody:{
@@ -101,6 +130,7 @@ async function uploadVideo(fileName, refreshToken){
                 return "upload error"
             }
             console.log("API upload complete")
+            
             return data
         }
     )
