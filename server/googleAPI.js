@@ -10,7 +10,7 @@ const credentials = require('./database/credentials.json')
  */
 var ClientId = credentials.web.client_id
 var ClientSecret = credentials.web.client_secret
-var RedirectUrl = "http://9eaa4cae.ngrok.io"
+var RedirectUrl = "http://d9c81b95.ngrok.io "
 //api key = AIzaSyClokCm5RDTCkNY9N7ninR3No967wvFEz4
 
 

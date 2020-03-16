@@ -71,6 +71,23 @@ function App() {
   }
   const getVids = () =>{
     console.log("getting your videos")
+    Axios.get('/getVideoObjects')
+    .then((res) => {
+      console.log(res.data)
+    })
+    .catch(err =>{
+      console.log(err)
+    })
+  }
+
+  const ping = () =>{
+    Axios.get('/ping')
+    .then((res) =>{
+      console.log(res.data)
+    })
+    .catch(err =>{
+      console.log(err)
+    })
   }
   
   return (
@@ -80,6 +97,7 @@ function App() {
       <button onClick={() => setAccessToken()}>Set access token</button>
       <button onClick={() => uploadVideo()}>Upload Youtube Video</button>
       <button onClick={() => getVids()}>Get Videos for Username</button>
+      <button onClick={() => ping()}>Ping</button>
     </div>
   );
 }

@@ -189,8 +189,15 @@ app.post('/uploadVideo', async (req,res) =>{
 
 app.get('/getVideoObjects', (req,res) =>{
     console.log("retrieving videos")
-    let videos = getVideoObjects()
-    res.send(videos)
+    getVideoObjects()
+    .then((videoResponse) =>{
+      console.log(videoResponse)
+      res.send(videoResponse)
+    })
+    .catch(err =>{
+      console.log(err)
+      res.send(err)
+    })
 })
 
 app.post('/test', async (req,res) =>{

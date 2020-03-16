@@ -42,9 +42,17 @@ async function saveVideo(videoObject){
 }
 async function getVideoObjects(){
     await DBconnect()
-    var videos = client.db("youtubeText").collection("videos")
-    videos = videos.find({}).toArray()
-    return videos
+    return new Promise((resolve, reject) =>{
+        try{
+            let videos = client.db("youtubeTest").collection("videos") 
+            videos = videos.find({}).toArray()
+            resolve(videos)
+        }
+        catch(err){
+            reject(err)
+        }
+    })
+    
 }
 
 module.exports = {
