@@ -10,7 +10,7 @@ const credentials = require('./database/credentials.json')
  */
 var ClientId = credentials.web.client_id
 var ClientSecret = credentials.web.client_secret
-var RedirectUrl = "http://38cce71a.ngrok.io"
+var RedirectUrl = "http://9eaa4cae.ngrok.io"
 //api key = AIzaSyClokCm5RDTCkNY9N7ninR3No967wvFEz4
 
 
@@ -106,7 +106,7 @@ async function uploadVideo(fileName, refreshToken){
     })
     
     
-
+    /*
     const fileSize = fs.statSync(__dirname + '/videos/' + fileName)
     console.log("upload file size = " + fileSize.size)
     const response = await Youtube.videos.insert({
@@ -133,7 +133,7 @@ async function uploadVideo(fileName, refreshToken){
             
             return data
         }
-    )
+    )*/
 }
 
 module.exports = {

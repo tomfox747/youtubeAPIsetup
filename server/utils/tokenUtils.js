@@ -16,6 +16,9 @@ function checkForToken(tokens, username){
     return found
 }
 
+/****************************************
+ * get a the previously stored refresh token for a user
+ */
 function findToken(tokens, username){
     var refreshToken
     for(var tokenIndex = 0; tokenIndex < tokens.length; tokenIndex++){
