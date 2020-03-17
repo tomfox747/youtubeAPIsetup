@@ -1,6 +1,7 @@
 const MongoClient = require('mongodb').MongoClient
 const uri = "mongodb+srv://tomfox:Epiphonedb94@practicecluster-onmkw.mongodb.net/test?retryWrites=true&w=majority"
 const client = new MongoClient(uri, {useNewUrlParser:true,  useUnifiedTopology:true})
+const {checkForToken, findToken, checkForAuthenticatedUser} = require('../utils/tokenUtils')
 
 const DBconnect = async () =>{
     console.log("connecting to the database")
@@ -24,12 +25,27 @@ async function setToken(userName, access_token, refresh_token){
     await DBconnect()
     var db = client.db("youtubeTest")
     var tokens = db.collection("tokens")
-    var myquery = { userName: userName };
-    var newvalues = { $set: {userName: userName, accessToken: access_token, refreshToken: refresh_token } };
-    tokens.updateOne(myquery, newvalues, function(err, res) {
-      if (err) throw err;
-      console.log("document updated");
-    });
+
+    let userFound = checkForAuthenticatedUser(userName, tokens)
+
+    if(userFound === true){
+        var myquery = { userName: userName };
+        var newvalues = { $set: {userName: userName, accessToken: access_token, refreshToken: refresh_token } };
+        tokens.updateOne(myquery, newvalues, function(err, res) {
+          if (err) throw err;
+          console.log("document updated");
+        });
+    }
+    else{
+        console.log("new authentication detected")
+        let userObject = {
+            userName:userName,
+            accessToken:access_token,
+            refreshToken:refresh_token
+        }
+        tokens = tokens.insertOne(userObject)
+        console.log("new user document has been added")
+    }
 }
 
 

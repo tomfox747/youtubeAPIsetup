@@ -29,7 +29,21 @@ function findToken(tokens, username){
     return refreshToken
 }
 
+
+/****************************************
+ * check whether user is already in the database
+ */
+function checkForAuthenticatedUser(userName, users){
+    for(var userIndex = 0; userIndex < users.length; userIndex++){
+        if(users[userIndex].userName === userName){
+            return true
+        }
+    }
+    return false
+}
+
 module.exports = {
     checkForToken,
-    findToken
+    findToken,
+    checkForAuthenticatedUser
 }

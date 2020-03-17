@@ -3,14 +3,18 @@ const youtube = require('youtube-api')
 const OAuth2  = google.auth.OAuth2
 const fs  = require('fs')
 
-const credentials = require('./database/credentials.json')
+//tomfox creds
+//const credentials = require('./database/credentials.json')
+
+//recurse creds
+const credentials = require('./database/credentialsRecurse.json')
 
 /********************************
  * variables
  */
 var ClientId = credentials.web.client_id
 var ClientSecret = credentials.web.client_secret
-var RedirectUrl = "http://d9c81b95.ngrok.io "
+var RedirectUrl = "http://114c25c7.ngrok.io"
 //api key = AIzaSyClokCm5RDTCkNY9N7ninR3No967wvFEz4
 
 
@@ -84,7 +88,7 @@ async function uploadVideo(fileName, refreshToken){
             notifySubscribers:false,
             requestBody:{
                 snippet:{
-                    title:"video upload from app",
+                    title:"test video 3",
                     description:"this is a test video"
                 },
                 status:{

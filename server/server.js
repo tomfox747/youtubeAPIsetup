@@ -24,15 +24,15 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 
-const userName = "tomfox747"
-
+//const userName = "tomfox747"
+const userName = "recurse"
 
 /*****************************************
  * Oauth google authentication check and process
  */
 app.get('/auth', async (req,res) =>{
+    console.log("authenticating user")  
     var tokens = await getTokens() //get tokens from database
-    console.log("authenticating user")
     var found = checkForToken(tokens, userName) //check if token exists for username
     
     if(found){
@@ -66,9 +66,9 @@ app.post('/setCode', async (req,res) =>{
  */
 app.post('/uploadVideo', async (req,res) =>{
     console.log("uploading video")
-    var tokens = await getTokens() //get tokens from database
+    var tokens = await getTokens() // get tokens from database
     var accessToken = await findToken(tokens, userName)
-    var fileName = 'pianoClip.mp4' //video must be stored in the local server videos folder
+    var fileName = 'pianoClip.mp4' // video must be stored in the local server videos folder
     
     uploadVideo(fileName, accessToken)
     .then((videoResponse) =>{
@@ -185,7 +185,7 @@ app.post('/uploadVideo', async (req,res) =>{
     responseURL: 'https://www.googleapis.com/upload/youtube/v3/videos?part=id%2Csnippet%2Cstatus&notifySubscribers=false&uploadType=multipart'
   }
 }
- */
+*/
 
 app.get('/getVideoObjects', (req,res) =>{
     console.log("retrieving videos")
@@ -200,9 +200,11 @@ app.get('/getVideoObjects', (req,res) =>{
     })
 })
 
-app.post('/test', async (req,res) =>{
-    console.log(req.body.data)
-    res.send("did a thing")
+app.get('/ping', async (req,res) =>{
+    console.log("ping received, ping will be sent shortly")
+    setTimeout(() =>{
+      res.send("pong")
+    }, 20000)
 })
 
 /****************************************
