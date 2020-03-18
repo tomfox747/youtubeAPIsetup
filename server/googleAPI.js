@@ -4,17 +4,20 @@ const OAuth2  = google.auth.OAuth2
 const fs  = require('fs')
 
 //tomfox creds
+const credentials = require('./database/credentials.json')
+
+//thomasfox creds
 //const credentials = require('./database/credentials.json')
 
 //recurse creds
-const credentials = require('./database/credentialsRecurse.json')
+//const credentials = require('./database/credentialsRecurse.json')
 
 /********************************
  * variables
  */
 var ClientId = credentials.web.client_id
 var ClientSecret = credentials.web.client_secret
-var RedirectUrl = "http://114c25c7.ngrok.io"
+var RedirectUrl = "http://f0e99077.ngrok.io"
 //api key = AIzaSyClokCm5RDTCkNY9N7ninR3No967wvFEz4
 
 
@@ -99,12 +102,12 @@ async function uploadVideo(fileName, refreshToken){
                 body:fs.createReadStream(__dirname + '/videos/' + fileName)
             }
         },(err, data) =>{
-                if(err){
-                    console.log(err)
-                    reject(err)
-                }
-                console.log("API upload complete")
-                resolve(data)
+            if(err){
+                console.log(err)
+                reject(err)
+            }
+            console.log("API upload complete")
+            resolve(data)
         }   
         )
     })

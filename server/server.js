@@ -16,7 +16,7 @@ const {checkForToken, findToken} = require('./utils/tokenUtils')
 const app = express()
 const port = 8080
 
-//app.use(cors())
+//app.use(cors()) 
 app.use(favicon(__dirname + '/favicon.ico'))
 app.use(express.static(__dirname))
 app.use(express.static(path.join(__dirname, '../client/build')))
@@ -25,7 +25,8 @@ app.use(bodyParser.json());
 
 
 //const userName = "tomfox747"
-const userName = "recurse"
+//const userName = "recurse" account does not allow youtube uploads for some reason (some account configuration issue)
+const userName = "tomfox"
 
 /*****************************************
  * Oauth google authentication check and process
@@ -68,6 +69,7 @@ app.post('/uploadVideo', async (req,res) =>{
     console.log("uploading video")
     var tokens = await getTokens() // get tokens from database
     var accessToken = await findToken(tokens, userName)
+    console.log(accessToken)
     var fileName = 'pianoClip.mp4' // video must be stored in the local server videos folder
     
     uploadVideo(fileName, accessToken)
@@ -92,7 +94,7 @@ app.post('/uploadVideo', async (req,res) =>{
     })
 })
 
-/** video response object format
+/* video response object format
 {
   config: {
     url: 'https://www.googleapis.com/upload/youtube/v3/videos?part=id%2Csnippet%2Cstatus&notifySubscribers=false&uploadType=multipart',
