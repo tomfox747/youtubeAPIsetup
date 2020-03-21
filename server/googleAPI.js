@@ -3,10 +3,10 @@ const youtube = require('youtube-api')
 const OAuth2  = google.auth.OAuth2
 const fs  = require('fs')
 
-//tomfox creds
-const credentials = require('./database/credentials.json')
+//tomfox747 creds
+const credentials = require('./database/credentialsTF.json')
 
-//thomasfox creds
+//thomasfox747 creds
 //const credentials = require('./database/credentials.json')
 
 //recurse creds
@@ -17,7 +17,7 @@ const credentials = require('./database/credentials.json')
  */
 var ClientId = credentials.web.client_id
 var ClientSecret = credentials.web.client_secret
-var RedirectUrl = "http://f0e99077.ngrok.io"
+var RedirectUrl = "http://94ca9424.ngrok.io"
 //api key = AIzaSyClokCm5RDTCkNY9N7ninR3No967wvFEz4
 
 
@@ -86,30 +86,36 @@ async function uploadVideo(fileName, refreshToken){
 
         const fileSize = fs.statSync(__dirname + '/videos/' + fileName)
         console.log("upload file size = " + fileSize.size)
-        Youtube.videos.insert({
-            part:'id,snippet,status',
-            notifySubscribers:false,
-            requestBody:{
-                snippet:{
-                    title:"test video 3",
-                    description:"this is a test video"
+        
+        try{
+            Youtube.videos.insert({
+                part:'id,snippet,status',
+                notifySubscribers:false,
+                requestBody:{
+                    snippet:{
+                        title:"test video 5",
+                        description:"this is a test video"
+                    },
+                    status:{
+                        privacyStatus:'unlisted'
+                    }
                 },
-                status:{
-                    privacyStatus:'public'
+                media:{
+                    body:fs.createReadStream(__dirname + '/videos/' + fileName)
                 }
-            },
-            media:{
-                body:fs.createReadStream(__dirname + '/videos/' + fileName)
-            }
-        },(err, data) =>{
-            if(err){
-                console.log(err)
-                reject(err)
-            }
-            console.log("API upload complete")
-            resolve(data)
-        }   
-        )
+            },(err, data) =>{
+                if(err){
+                    console.log(err)
+                    reject(err)
+                }
+                console.log("API upload complete")
+                resolve(data)
+            }   
+            )
+        }catch(err){
+            console.log(err)
+        }
+        
     })
     
     

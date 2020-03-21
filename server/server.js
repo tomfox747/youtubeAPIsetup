@@ -24,9 +24,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 
-//const userName = "tomfox747"
+//const userName = "tomfox747" //thomasfox747@gmail.com account doesn't seem to work for longer youtube videos (possibly a configuration issue)
 //const userName = "recurse" account does not allow youtube uploads for some reason (some account configuration issue)
-const userName = "tomfox"
+const userName = "tomfox" //tomfox747@gmail.com
 
 /*****************************************
  * Oauth google authentication check and process
@@ -69,29 +69,32 @@ app.post('/uploadVideo', async (req,res) =>{
     console.log("uploading video")
     var tokens = await getTokens() // get tokens from database
     var accessToken = await findToken(tokens, userName)
-    console.log(accessToken)
-    var fileName = 'pianoClip.mp4' // video must be stored in the local server videos folder
+    var fileName = 'test5.mp4' // video must be stored in the local server videos folder
     
-    uploadVideo(fileName, accessToken)
-    .then((videoResponse) =>{
-        console.log("video upload completed")
-        console.log(videoResponse)
-        var videoData = videoResponse.data
-        var videoObject = {
-            ID:videoData.id,
-            title:videoData.snippet.title,
-            description:videoData.snippet.description,
-            pulishedAt:videoData.snippet.publishedAt,
-            author:userName,
-            lightUps:0
-        }
-        console.log("video object below")
-        console.log(videoObject)
-        saveVideo(videoObject)
-    })
-    .catch(err =>{
-        console.log(err)
-    })
+    try{
+      uploadVideo(fileName, accessToken)
+      .then((videoResponse) =>{
+          console.log("video upload completed")
+          console.log(videoResponse)
+          var videoData = videoResponse.data
+          var videoObject = {
+              ID:videoData.id,
+              title:videoData.snippet.title,
+              description:videoData.snippet.description,
+              pulishedAt:videoData.snippet.publishedAt,
+              author:userName,
+              lightUps:0
+          }
+          console.log("video object below")
+          console.log(videoObject)
+          saveVideo(videoObject)
+      })
+      .catch(err =>{
+          console.log(err)
+      })
+    }catch(err){
+      console.log(err)
+    }
 })
 
 /* video response object format
